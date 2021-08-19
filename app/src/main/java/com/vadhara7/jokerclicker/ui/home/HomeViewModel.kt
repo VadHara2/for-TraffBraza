@@ -15,7 +15,7 @@ class HomeViewModel : ViewModel() {
 
     val currentProgress = MutableLiveData<Int>(0)
     val mainImageUrl = MutableLiveData<String>()
-
+    val showInterstitial = MutableLiveData<Boolean>(false)
 
     fun onImageClick() {
         currentProgress.value = currentProgress.value?.plus(1)
@@ -23,6 +23,7 @@ class HomeViewModel : ViewModel() {
         if (currentProgress.value!! > 7777) {
             currentProgress.value = 0
         }
+        showInterstitial.value = currentProgress.value!! % 50 == 0
 
     }
 
