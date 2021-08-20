@@ -1,11 +1,14 @@
 package com.vadhara7.jokerclicker.ui.home
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -24,6 +27,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     private lateinit var mAdView: AdView
     private var mInterstitialAd: InterstitialAd? = null
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -35,16 +39,42 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         binding.apply {
             lifecycleOwner = this@HomeFragment
             viewmodel = viewModel
+
+            imageView.setOnTouchListener { v, event ->
+
+                when (event.action) {
+                    MotionEvent.ACTION_DOWN -> {
+                        v.scaleY = 0.9f
+                        v.scaleX = 0.9f
+                        v.invalidate()
+                    }
+
+                    MotionEvent.ACTION_UP -> {
+                        v.scaleY = 1f
+                        v.scaleX = 1f
+                        v.invalidate()
+                    }
+                }
+
+                false
+            }
         }
 
-        viewModel.currentProgress.value = loadNumber()
-        viewModel.changePhoto()
-        viewModel.showInterstitial.observe(viewLifecycleOwner, Observer {
-            if (it && mInterstitialAd != null) {
-                mInterstitialAd?.show(requireActivity())
-                setUpInterstitialAd()
-            }
-        })
+        viewModel.apply {
+            currentProgress.value = loadNumber()
+            changePhoto()
+            showInterstitial.observe(viewLifecycleOwner, Observer {
+                if (it && mInterstitialAd != null) {
+                    mInterstitialAd?.show(requireActivity())
+                    setUpInterstitialAd()
+                }
+            })
+            nextLevelMessage.observe(viewLifecycleOwner, Observer {
+                if (it != "0") {
+                    Toast.makeText(requireContext(),"$it", Toast.LENGTH_LONG).show()
+                }
+            })
+        }
 
         MobileAds.initialize(requireActivity())
         mAdView = binding.adView

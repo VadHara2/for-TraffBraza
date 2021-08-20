@@ -16,6 +16,7 @@ class HomeViewModel : ViewModel() {
     val currentProgress = MutableLiveData<Int>(0)
     val mainImageUrl = MutableLiveData<String>()
     val showInterstitial = MutableLiveData<Boolean>(false)
+    val nextLevelMessage = MutableLiveData<String>("0")
 
     fun onImageClick() {
         currentProgress.value = currentProgress.value?.plus(1)
@@ -25,6 +26,13 @@ class HomeViewModel : ViewModel() {
         }
         showInterstitial.value = currentProgress.value!! % 50 == 0
 
+        when (currentProgress.value) {
+            8 -> nextLevelMessage.value = "Next Level"
+            78 -> nextLevelMessage.value = "Next Level"
+            778 -> nextLevelMessage.value = "Next Level"
+            0 -> nextLevelMessage.value = "Restart a game"
+            else -> "0"
+        }
     }
 
     fun changePhoto() {
