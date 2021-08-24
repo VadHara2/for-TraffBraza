@@ -2,7 +2,10 @@ package com.vadhara7.jokerclicker.ui.home
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.os.Build
 import android.os.Bundle
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -35,24 +38,34 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     ): View {
         val binding: FragmentHomeBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_home, container, false)
+        val vibro = (requireActivity().getSystemService(Context.VIBRATOR_SERVICE) as Vibrator)
 
         binding.apply {
             lifecycleOwner = this@HomeFragment
             viewmodel = viewModel
-
+            navigationBar.layoutParams.height = getNavigationBarHeight()
+            statusBar.layoutParams.height = getStatusBarHeight()
             imageView.setOnTouchListener { v, event ->
 
                 when (event.action) {
                     MotionEvent.ACTION_DOWN -> {
-                        v.scaleY = 0.9f
-                        v.scaleX = 0.9f
-                        v.invalidate()
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            vibro.vibrate(VibrationEffect.createOneShot(100, VibrationEffect.DEFAULT_AMPLITUDE))
+                        }else{
+                            vibro.vibrate(100)
+                        }
+
+                        cardView.scaleY = 0.9f
+                        cardView.scaleX = 0.9f
+                        cardView.invalidate()
+                        Log.i(TAG, "onCreateView: DOWN")
                     }
 
                     MotionEvent.ACTION_UP -> {
-                        v.scaleY = 1f
-                        v.scaleX = 1f
-                        v.invalidate()
+                        cardView.scaleY = 1f
+                        cardView.scaleX = 1f
+                        cardView.invalidate()
+                        Log.i(TAG, "onCreateView: UP")
                     }
                 }
 
@@ -129,6 +142,25 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
             })
 
+    }
+
+
+    private fun getStatusBarHeight(): Int {
+        var result = 0
+        val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
+        if (resourceId > 0) {
+            result = resources.getDimensionPixelSize(resourceId)
+        }
+        return result
+    }
+
+    private fun getNavigationBarHeight(): Int {
+        var result = 0
+        val resourceId: Int = resources.getIdentifier("navigation_bar_height", "dimen", "android")
+        if (resourceId > 0) {
+            result = resources.getDimensionPixelSize(resourceId)
+        }
+        return result
     }
 
 }
