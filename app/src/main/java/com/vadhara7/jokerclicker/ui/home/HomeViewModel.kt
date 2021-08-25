@@ -28,9 +28,9 @@ class HomeViewModel : ViewModel() {
         showInterstitial.value = currentProgress.value!! % 50 == 0
 
         when (currentProgress.value) {
-            8 -> nextLevelMessage.value = "Next Level"
-            78 -> nextLevelMessage.value = "Next Level"
-            778 -> nextLevelMessage.value = "Next Level"
+            7 -> nextLevelMessage.value = "Next Level"
+            77 -> nextLevelMessage.value = "Next Level"
+            777 -> nextLevelMessage.value = "Next Level"
             0 -> nextLevelMessage.value = "Restart a game"
             else -> "0"
         }
